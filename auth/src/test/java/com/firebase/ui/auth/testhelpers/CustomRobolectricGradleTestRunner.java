@@ -30,6 +30,8 @@ import org.robolectric.manifest.AndroidManifest;
 import org.robolectric.res.FileFsFile;
 import org.robolectric.res.FsFile;
 
+import java.io.File;
+
 /**
  * For custom manifest hack, see:
  * https://gist.github.com/venator85/282df3677af9ecac56e5e4b91471cd8f
@@ -67,7 +69,8 @@ public class CustomRobolectricGradleTestRunner extends RobolectricTestRunner {
                     getModuleRootPath(config),
                     appManifest.getAndroidManifestFile()
                             .getPath()
-                            .replace("manifests/full", "manifests/aapt"));
+                            .replace("manifests" + File.separator + "full",
+                                     "manifests" + File.separator + "aapt"));
 
             return new AndroidManifest(
                     androidManifestFile,
