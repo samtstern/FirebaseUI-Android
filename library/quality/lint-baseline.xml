@@ -234,7 +234,7 @@
 "
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="C:\Users\gojun\Documents\StudioProjects\FirebaseUI-Android\auth\src\main\res\layout\idp_button_facebook.xml"
+            file="src\main\res\layout\idp_button_facebook.xml"
             line="5"
             column="5"/>
     </issue>
@@ -246,7 +246,7 @@
 "
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="C:\Users\gojun\Documents\StudioProjects\FirebaseUI-Android\auth\src\main\res\layout\idp_button_google.xml"
+            file="src\main\res\layout\idp_button_google.xml"
             line="5"
             column="5"/>
     </issue>
@@ -258,7 +258,7 @@
 "
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="C:\Users\gojun\Documents\StudioProjects\FirebaseUI-Android\auth\src\main\res\layout\idp_button_twitter.xml"
+            file="src\main\res\layout\idp_button_twitter.xml"
             line="5"
             column="5"/>
     </issue>
