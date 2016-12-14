@@ -69,7 +69,7 @@ task pmd(type: Pmd) {
 
 android {
     lintOptions {
-        disable 'InvalidPackage', 'RestrictedApi' // TODO remove RestrictedApi
+        disable 'InvalidPackage'
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
