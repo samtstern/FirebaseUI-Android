@@ -81,7 +81,7 @@ public class RegisterEmailActivityTest {
         RegisterEmailActivity registerEmailActivity = createActivity();
 
         // Trigger RegisterEmailFragment (bypass check email)
-        registerEmailActivity.onNewUser(TestConstants.EMAIL, null, null);
+        registerEmailActivity.onNewUser(new User.Builder(TestConstants.EMAIL).build());
 
         Button button = (Button) registerEmailActivity.findViewById(R.id.button_create);
         button.performClick();
@@ -120,7 +120,10 @@ public class RegisterEmailActivityTest {
         RegisterEmailActivity registerEmailActivity = createActivity();
 
         // Trigger new user UI (bypassing check email)
-        registerEmailActivity.onNewUser(TestConstants.EMAIL, TestConstants.NAME, TestConstants.PHOTO_URI);
+        registerEmailActivity.onNewUser(new User.Builder(TestConstants.EMAIL)
+                                                .setName(TestConstants.NAME)
+                                                .setProfilePicUri(TestConstants.PHOTO_URI)
+                                                .build());
 
         EditText name = (EditText) registerEmailActivity.findViewById(R.id.name);
         EditText password = (EditText) registerEmailActivity.findViewById(R.id.password);
