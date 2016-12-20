@@ -16,6 +16,7 @@ package com.firebase.ui.auth.ui.email;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,19 +91,21 @@ public class RegisterEmailActivity extends AppCompatBase implements
                 provider,
                 null,
                 email);
-        mActivityHelper.startActivityForResult(intent,
-                RC_WELCOME_BACK_IDP);
+        mActivityHelper.startActivityForResult(intent, RC_WELCOME_BACK_IDP);
 
         setSlideAnimation();
     }
 
     @Override
-    public void onNewUser(@NonNull String email, @Nullable String name) {
+    public void onNewUser(@NonNull String email,
+                          @Nullable String name,
+                          @Nullable Uri profilePicUri) {
         // New user, direct them to create an account with email/password.
         RegisterEmailFragment fragment = RegisterEmailFragment.getInstance(
                 mActivityHelper.getFlowParams(),
                 email,
-                name);
+                name,
+                profilePicUri);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_register_email, fragment, RegisterEmailFragment.TAG)
                 .addSharedElement(findViewById(R.id.email_layout), "email_field")

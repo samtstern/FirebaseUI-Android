@@ -20,6 +20,7 @@ package com.firebase.ui.auth.ui;
 public class ExtraConstants {
     public static final String EXTRA_EMAIL = "extra_email";
     public static final String EXTRA_NAME = "extra_name";
+    public static final String EXTRA_PROFILE_PIC_URL = "extra_profile_pic_url";
     public static final String EXTRA_ERROR_MESSAGE = "extra_error_msg";
     public static final String EXTRA_FLOW_PARAMS = "extra_flow_params";
     public static final String EXTRA_IDP_RESPONSE = "extra_idp_response";

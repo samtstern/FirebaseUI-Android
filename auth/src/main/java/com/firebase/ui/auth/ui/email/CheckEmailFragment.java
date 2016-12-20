@@ -3,6 +3,7 @@ package com.firebase.ui.auth.ui.email;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,8 +37,7 @@ import java.util.List;
  *
  * Host Activities should implement {@link CheckEmailListener}.
  */
-public class CheckEmailFragment extends BaseFragment implements
-        View.OnClickListener {
+public class CheckEmailFragment extends BaseFragment implements View.OnClickListener {
 
     /**
      * Interface to be implemented by Activities hosting this Fragment.
@@ -57,7 +57,7 @@ public class CheckEmailFragment extends BaseFragment implements
         /**
          * Email entered does not beling to an existing user.
          */
-        void onNewUser(@NonNull String email, @Nullable String name);
+        void onNewUser(@NonNull String email, @Nullable String name, @Nullable Uri profilePicUri);
 
     }
 
@@ -182,11 +182,13 @@ public class CheckEmailFragment extends BaseFragment implements
                             if (providers == null || providers.isEmpty()) {
                                 // Get name from SmartLock, if possible
                                 String name = null;
+                                Uri profilePicUri = null;
                                 if (mLastCredential != null && mLastCredential.getId().equals(email)) {
                                     name = mLastCredential.getName();
+                                    profilePicUri = mLastCredential.getProfilePictureUri();
                                 }
 
-                                mListener.onNewUser(email, name);
+                                mListener.onNewUser(email, name, profilePicUri);
                             } else if (EmailAuthProvider.PROVIDER_ID.equalsIgnoreCase(providers.get(0))) {
                                 mListener.onExistingEmailUser(email);
                             } else {

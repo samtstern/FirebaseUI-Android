@@ -62,13 +62,15 @@ public class RegisterEmailFragment extends BaseFragment implements
 
     public static RegisterEmailFragment getInstance(FlowParameters flowParameters,
                                                     @Nullable String email,
-                                                    @Nullable String name) {
+                                                    @Nullable String name,
+                                                    @Nullable Uri profilePicUrl) {
         RegisterEmailFragment fragment = new RegisterEmailFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(ExtraConstants.EXTRA_FLOW_PARAMS, flowParameters);
         args.putString(ExtraConstants.EXTRA_EMAIL, email);
         args.putString(ExtraConstants.EXTRA_NAME, name);
+        args.putParcelable(ExtraConstants.EXTRA_PROFILE_PIC_URL, profilePicUrl);
 
         fragment.setArguments(args);
         return fragment;
@@ -204,7 +206,10 @@ public class RegisterEmailFragment extends BaseFragment implements
                     public void onSuccess(AuthResult authResult) {
                         // Set display name
                         UserProfileChangeRequest changeNameRequest =
-                                new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                                new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name)
+                                        .setPhotoUri(getArguments().<Uri>getParcelable(ExtraConstants.EXTRA_PROFILE_PIC_URL))
+                                        .build();
 
                         final FirebaseUser user = authResult.getUser();
                         user.updateProfile(changeNameRequest)
