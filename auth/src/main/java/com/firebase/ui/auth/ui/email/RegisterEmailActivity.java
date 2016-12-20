@@ -41,20 +41,12 @@ public class RegisterEmailActivity extends AppCompatBase implements
     private static final int RC_SIGN_IN = 17;
     private static final int RC_WELCOME_BACK_IDP = 18;
 
-    private User mUser;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_email);
 
-        if (savedInstanceState != null) {
-            User user = savedInstanceState.getParcelable(ExtraConstants.EXTRA_USER);
-            if (user != null) {
-                onNewUser(user);
-            }
-            return;
-        }
+        if (savedInstanceState != null) return;
 
         // Get email from intent (can be null)
         String email = getIntent().getExtras().getString(ExtraConstants.EXTRA_EMAIL);
@@ -70,7 +62,7 @@ public class RegisterEmailActivity extends AppCompatBase implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(ExtraConstants.EXTRA_USER, mUser);
+        outState.putBoolean(ExtraConstants.HAS_EXISTING_INSTANCE, true);
         super.onSaveInstanceState(outState);
     }
 
@@ -113,12 +105,10 @@ public class RegisterEmailActivity extends AppCompatBase implements
 
     @Override
     public void onNewUser(User user) {
-        mUser = user;
-
         // New user, direct them to create an account with email/password.
         RegisterEmailFragment fragment = RegisterEmailFragment.getInstance(
                 mActivityHelper.getFlowParams(),
-                mUser);
+                user);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_register_email, fragment, RegisterEmailFragment.TAG);
 

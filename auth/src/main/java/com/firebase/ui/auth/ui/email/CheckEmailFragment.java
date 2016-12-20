@@ -198,7 +198,7 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
 
                                 mListener.onNewUser(new User.Builder(email)
                                                             .setName(name)
-                                                            .setProfilePicUri(profilePicUri)
+                                                            .setPhotoUri(profilePicUri)
                                                             .build());
                             } else if (EmailAuthProvider.PROVIDER_ID.equalsIgnoreCase(providers.get(0))) {
                                 mListener.onExistingEmailUser(new User.Builder(email).build());

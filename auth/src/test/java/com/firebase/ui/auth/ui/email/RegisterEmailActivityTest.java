@@ -122,7 +122,7 @@ public class RegisterEmailActivityTest {
         // Trigger new user UI (bypassing check email)
         registerEmailActivity.onNewUser(new User.Builder(TestConstants.EMAIL)
                                                 .setName(TestConstants.NAME)
-                                                .setProfilePicUri(TestConstants.PHOTO_URI)
+                                                .setPhotoUri(TestConstants.PHOTO_URI)
                                                 .build());
 
         EditText name = (EditText) registerEmailActivity.findViewById(R.id.name);

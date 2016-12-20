@@ -76,7 +76,11 @@ public class RegisterEmailFragment extends BaseFragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUser = getArguments().getParcelable(ExtraConstants.EXTRA_USER);
+        if (savedInstanceState == null) {
+            mUser = getArguments().getParcelable(ExtraConstants.EXTRA_USER);
+        } else {
+            mUser = savedInstanceState.getParcelable(ExtraConstants.EXTRA_USER);
+        }
     }
 
     @Nullable
@@ -106,6 +110,8 @@ public class RegisterEmailFragment extends BaseFragment implements
         mNameEditText.setOnFocusChangeListener(this);
         mPasswordEditText.setOnFocusChangeListener(this);
         v.findViewById(R.id.button_create).setOnClickListener(this);
+
+        if (savedInstanceState != null) return v;
 
         // If email is passed in, fill in the field and move down to the name field.
         String email = mUser.getEmail();
@@ -157,6 +163,16 @@ public class RegisterEmailFragment extends BaseFragment implements
 
         mSaveSmartLock = mHelper.getSaveSmartLockInstance(getActivity());
         setUpTermsOfService();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(ExtraConstants.EXTRA_USER,
+                               new User.Builder(mEmailEditText.getText().toString())
+                                       .setName(mNameEditText.getText().toString())
+                                       .setPhotoUri(mUser.getPhotoUri())
+                                       .build());
+        super.onSaveInstanceState(outState);
     }
 
     private void setUpTermsOfService() {
@@ -233,7 +249,7 @@ public class RegisterEmailFragment extends BaseFragment implements
                         UserProfileChangeRequest changeNameRequest =
                                 new UserProfileChangeRequest.Builder()
                                         .setDisplayName(name)
-                                        .setPhotoUri(mUser.getProfilePicUri())
+                                        .setPhotoUri(mUser.getPhotoUri())
                                         .build();
 
                         final FirebaseUser user = authResult.getUser();

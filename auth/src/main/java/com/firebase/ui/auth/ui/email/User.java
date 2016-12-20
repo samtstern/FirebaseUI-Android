@@ -25,13 +25,13 @@ public class User implements Parcelable {
     private String mEmail;
     private String mName;
     private String mProvider;
-    private Uri mProfilePicUri;
+    private Uri mPhotoUri;
 
-    private User(String email, String name, String provider, Uri profilePicUri) {
+    private User(String email, String name, String provider, Uri photoUri) {
         mEmail = email;
         mName = name;
         mProvider = provider;
-        mProfilePicUri = profilePicUri;
+        mPhotoUri = photoUri;
     }
 
     @NonNull
@@ -50,8 +50,8 @@ public class User implements Parcelable {
     }
 
     @Nullable
-    public Uri getProfilePicUri() {
-        return mProfilePicUri;
+    public Uri getPhotoUri() {
+        return mPhotoUri;
     }
 
     @Override
@@ -64,14 +64,14 @@ public class User implements Parcelable {
         dest.writeString(mEmail);
         dest.writeString(mName);
         dest.writeString(mProvider);
-        dest.writeParcelable(mProfilePicUri, flags);
+        dest.writeParcelable(mPhotoUri, flags);
     }
 
     public static final class Builder {
         private String mEmail;
         private String mName;
         private String mProvider;
-        private Uri mProfilePicUri;
+        private Uri mPhotoUri;
 
         public Builder(@NonNull String email) {
             mEmail = email;
@@ -87,13 +87,13 @@ public class User implements Parcelable {
             return this;
         }
 
-        public Builder setProfilePicUri(Uri profilePicUri) {
-            mProfilePicUri = profilePicUri;
+        public Builder setPhotoUri(Uri photoUri) {
+            mPhotoUri = photoUri;
             return this;
         }
 
         public User build() {
-            return new User(mEmail, mName, mProvider, mProfilePicUri);
+            return new User(mEmail, mName, mProvider, mPhotoUri);
         }
     }
 }
