@@ -47,17 +47,17 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
         /**
          * Email entered belongs to an existing email user.
          */
-        void onExistingEmailUser(@NonNull String email);
+        void onExistingEmailUser(User user);
 
         /**
          * Email entered belongs to an existing IDP user.
          */
-        void onExistingIdpUser(@NonNull String email, @NonNull String provider);
+        void onExistingIdpUser(User user);
 
         /**
          * Email entered does not beling to an existing user.
          */
-        void onNewUser(@NonNull String email, @Nullable String name, @Nullable Uri profilePicUri);
+        void onNewUser(User user);
 
     }
 
@@ -117,7 +117,9 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
         if (!(getActivity() instanceof CheckEmailListener)) {
             throw new IllegalStateException("Activity must implement CheckEmailListener");
         }
-        this.mListener = (CheckEmailListener) getActivity();
+        mListener = (CheckEmailListener) getActivity();
+
+        if (savedInstanceState != null) return;
 
         // Check for email
         String email = getArguments().getString(ExtraConstants.EXTRA_EMAIL);
@@ -129,6 +131,12 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
             // Try SmartLock email autocomplete hint
             showEmailAutoCompleteHint();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(ExtraConstants.HAS_EXISTING_INSTANCE, true);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -188,11 +196,16 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
                                     profilePicUri = mLastCredential.getProfilePictureUri();
                                 }
 
-                                mListener.onNewUser(email, name, profilePicUri);
+                                mListener.onNewUser(new User.Builder(email)
+                                                            .setName(name)
+                                                            .setProfilePicUri(profilePicUri)
+                                                            .build());
                             } else if (EmailAuthProvider.PROVIDER_ID.equalsIgnoreCase(providers.get(0))) {
-                                mListener.onExistingEmailUser(email);
+                                mListener.onExistingEmailUser(new User.Builder(email).build());
                             } else {
-                                mListener.onExistingIdpUser(email, providers.get(0));
+                                mListener.onExistingIdpUser(new User.Builder(email)
+                                                                    .setProvider(providers.get(0))
+                                                                    .build());
                             }
                         }
                     });

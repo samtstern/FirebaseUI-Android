@@ -60,20 +60,23 @@ public class RegisterEmailFragment extends BaseFragment implements
     private RequiredFieldValidator mNameValidator;
     private SaveSmartLock mSaveSmartLock;
 
-    public static RegisterEmailFragment getInstance(FlowParameters flowParameters,
-                                                    @Nullable String email,
-                                                    @Nullable String name,
-                                                    @Nullable Uri profilePicUrl) {
+    private User mUser;
+
+    public static RegisterEmailFragment getInstance(FlowParameters flowParameters, User user) {
         RegisterEmailFragment fragment = new RegisterEmailFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(ExtraConstants.EXTRA_FLOW_PARAMS, flowParameters);
-        args.putString(ExtraConstants.EXTRA_EMAIL, email);
-        args.putString(ExtraConstants.EXTRA_NAME, name);
-        args.putParcelable(ExtraConstants.EXTRA_PROFILE_PIC_URL, profilePicUrl);
+        args.putParcelable(ExtraConstants.EXTRA_USER, user);
 
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mUser = getArguments().getParcelable(ExtraConstants.EXTRA_USER);
     }
 
     @Nullable
@@ -105,13 +108,13 @@ public class RegisterEmailFragment extends BaseFragment implements
         v.findViewById(R.id.button_create).setOnClickListener(this);
 
         // If email is passed in, fill in the field and move down to the name field.
-        String email = getArguments().getString(ExtraConstants.EXTRA_EMAIL);
+        String email = mUser.getEmail();
         if (!TextUtils.isEmpty(email)) {
             mEmailEditText.setText(email);
         }
 
         // If name is passed in, fill in the field and move down to the password field.
-        String name = getArguments().getString(ExtraConstants.EXTRA_NAME);
+        String name = mUser.getName();
         if (!TextUtils.isEmpty(name)) {
             mNameEditText.setText(name);
         }
@@ -230,8 +233,7 @@ public class RegisterEmailFragment extends BaseFragment implements
                         UserProfileChangeRequest changeNameRequest =
                                 new UserProfileChangeRequest.Builder()
                                         .setDisplayName(name)
-                                        .setPhotoUri(getArguments().<Uri>getParcelable(
-                                                ExtraConstants.EXTRA_PROFILE_PIC_URL))
+                                        .setPhotoUri(mUser.getProfilePicUri())
                                         .build();
 
                         final FirebaseUser user = authResult.getUser();
