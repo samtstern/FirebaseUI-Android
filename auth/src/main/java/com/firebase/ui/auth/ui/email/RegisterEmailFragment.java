@@ -108,14 +108,36 @@ public class RegisterEmailFragment extends BaseFragment implements
         String email = getArguments().getString(ExtraConstants.EXTRA_EMAIL);
         if (!TextUtils.isEmpty(email)) {
             mEmailEditText.setText(email);
-            mNameEditText.requestFocus();
         }
 
         // If name is passed in, fill in the field and move down to the password field.
         String name = getArguments().getString(ExtraConstants.EXTRA_NAME);
         if (!TextUtils.isEmpty(name)) {
             mNameEditText.setText(name);
-            mPasswordEditText.requestFocus();
+        }
+
+        // See http://stackoverflow.com/questions/11082341/android-requestfocus-ineffective#comment51774752_11082523
+        if (!TextUtils.isEmpty(mNameEditText.getText())) {
+            mPasswordEditText.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPasswordEditText.requestFocus();
+                }
+            });
+        } else if (!TextUtils.isEmpty(mEmailEditText.getText())) {
+            mNameEditText.post(new Runnable() {
+                @Override
+                public void run() {
+                    mNameEditText.requestFocus();
+                }
+            });
+        } else {
+            mEmailEditText.post(new Runnable() {
+                @Override
+                public void run() {
+                    mEmailEditText.requestFocus();
+                }
+            });
         }
 
         return v;
