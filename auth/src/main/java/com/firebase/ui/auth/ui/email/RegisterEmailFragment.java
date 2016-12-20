@@ -208,7 +208,8 @@ public class RegisterEmailFragment extends BaseFragment implements
                         UserProfileChangeRequest changeNameRequest =
                                 new UserProfileChangeRequest.Builder()
                                         .setDisplayName(name)
-                                        .setPhotoUri(getArguments().<Uri>getParcelable(ExtraConstants.EXTRA_PROFILE_PIC_URL))
+                                        .setPhotoUri(getArguments().<Uri>getParcelable(
+                                                ExtraConstants.EXTRA_PROFILE_PIC_URL))
                                         .build();
 
                         final FirebaseUser user = authResult.getUser();
@@ -227,7 +228,10 @@ public class RegisterEmailFragment extends BaseFragment implements
                                                 user,
                                                 password,
                                                 new IdpResponse(EmailAuthProvider.PROVIDER_ID,
-                                                        email));
+                                                                email));
+                                        // TODO temporary fix for #409
+                                        user.reauthenticate(
+                                                EmailAuthProvider.getCredential(email, password));
                                     }
                                 });
                     }
