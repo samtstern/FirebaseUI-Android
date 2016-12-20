@@ -111,7 +111,9 @@ public class RegisterEmailFragment extends BaseFragment implements
         mPasswordEditText.setOnFocusChangeListener(this);
         v.findViewById(R.id.button_create).setOnClickListener(this);
 
-        if (savedInstanceState != null) return v;
+        if (savedInstanceState != null) {
+            return v;
+        }
 
         // If email is passed in, fill in the field and move down to the name field.
         String email = mUser.getEmail();
@@ -127,30 +129,24 @@ public class RegisterEmailFragment extends BaseFragment implements
 
         // See http://stackoverflow.com/questions/11082341/android-requestfocus-ineffective#comment51774752_11082523
         if (!TextUtils.isEmpty(mNameEditText.getText())) {
-            mPasswordEditText.post(new Runnable() {
-                @Override
-                public void run() {
-                    mPasswordEditText.requestFocus();
-                }
-            });
+            safeRequestFocus(mPasswordEditText);
         } else if (!TextUtils.isEmpty(mEmailEditText.getText())) {
-            mNameEditText.post(new Runnable() {
-                @Override
-                public void run() {
-                    mNameEditText.requestFocus();
-                }
-            });
+            safeRequestFocus(mNameEditText);
         } else {
-            mEmailEditText.post(new Runnable() {
-                @Override
-                public void run() {
-                    mEmailEditText.requestFocus();
-                }
-            });
+            safeRequestFocus(mEmailEditText);
         }
 
         return v;
 
+    }
+
+    private void safeRequestFocus(final View v) {
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+                v.requestFocus();
+            }
+        });
     }
 
     @Override
@@ -179,8 +175,8 @@ public class RegisterEmailFragment extends BaseFragment implements
         if (mHelper.getFlowParams().termsOfServiceUrl == null) {
             return;
         }
-        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(
-                ContextCompat.getColor(getActivity().getApplicationContext(), R.color.linkColor));
+        ForegroundColorSpan foregroundColorSpan =
+                new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.linkColor));
 
         String preamble = getResources().getString(R.string.create_account_preamble);
         String link = getResources().getString(R.string.terms_of_service);
@@ -269,9 +265,6 @@ public class RegisterEmailFragment extends BaseFragment implements
                                                 password,
                                                 new IdpResponse(EmailAuthProvider.PROVIDER_ID,
                                                                 email));
-                                        // TODO temporary fix for #409
-                                        user.reauthenticate(
-                                                EmailAuthProvider.getCredential(email, password));
                                     }
                                 });
                     }

@@ -139,9 +139,6 @@ public class WelcomeBackPasswordPrompt extends AppCompatBase implements View.OnC
                                     authResult.getUser(),
                                     password,
                                     new IdpResponse(EmailAuthProvider.PROVIDER_ID, email));
-                            // TODO temporary fix for #409
-                            authResult.getUser().reauthenticate(
-                                    EmailAuthProvider.getCredential(email, password));
                         } else {
                             authResult.getUser()
                                     .linkWithCredential(authCredential)
@@ -154,9 +151,6 @@ public class WelcomeBackPasswordPrompt extends AppCompatBase implements View.OnC
                                                     mSaveSmartLock,
                                                     authResult.getUser(),
                                                     mIdpResponse);
-                                            // TODO temporary fix for #409
-                                            authResult.getUser().reauthenticate(
-                                                    EmailAuthProvider.getCredential(email, password));
                                         }
                                     });
                         }

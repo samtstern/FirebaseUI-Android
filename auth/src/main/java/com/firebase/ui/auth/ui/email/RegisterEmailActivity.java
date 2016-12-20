@@ -46,7 +46,9 @@ public class RegisterEmailActivity extends AppCompatBase implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_email);
 
-        if (savedInstanceState != null) return;
+        if (savedInstanceState != null) {
+            return;
+        }
 
         // Get email from intent (can be null)
         String email = getIntent().getExtras().getString(ExtraConstants.EXTRA_EMAIL);

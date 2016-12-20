@@ -119,7 +119,9 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
         }
         mListener = (CheckEmailListener) getActivity();
 
-        if (savedInstanceState != null) return;
+        if (savedInstanceState != null) {
+            return;
+        }
 
         // Check for email
         String email = getArguments().getString(ExtraConstants.EXTRA_EMAIL);
@@ -190,15 +192,15 @@ public class CheckEmailFragment extends BaseFragment implements View.OnClickList
                             if (providers == null || providers.isEmpty()) {
                                 // Get name from SmartLock, if possible
                                 String name = null;
-                                Uri profilePicUri = null;
+                                Uri photoUri = null;
                                 if (mLastCredential != null && mLastCredential.getId().equals(email)) {
                                     name = mLastCredential.getName();
-                                    profilePicUri = mLastCredential.getProfilePictureUri();
+                                    photoUri = mLastCredential.getProfilePictureUri();
                                 }
 
                                 mListener.onNewUser(new User.Builder(email)
                                                             .setName(name)
-                                                            .setPhotoUri(profilePicUri)
+                                                            .setPhotoUri(photoUri)
                                                             .build());
                             } else if (EmailAuthProvider.PROVIDER_ID.equalsIgnoreCase(providers.get(0))) {
                                 mListener.onExistingEmailUser(new User.Builder(email).build());
