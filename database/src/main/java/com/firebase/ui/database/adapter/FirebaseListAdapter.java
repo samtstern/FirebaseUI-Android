@@ -81,26 +81,26 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter implements Fire
     }
 
     @Override
-    public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+    public void onChildEvent(ChangeEventListener.EventType type, int index, int oldIndex) {
         notifyDataSetChanged();
     }
 
     @Override
-    public void onDataChanged() {
+    public void onNewData() {
     }
 
     @Override
-    public void onCancelled(DatabaseError error) {
+    public void onDatabaseError(DatabaseError error) {
         Log.w(TAG, error.toException());
     }
 
     @Override
     public T getItem(int position) {
-        return parseSnapshot(mSnapshots.get(position));
+        return parseDataSnapshot(mSnapshots.get(position));
     }
 
     @Override
-    public T parseSnapshot(DataSnapshot snapshot) {
+    public T parseDataSnapshot(DataSnapshot snapshot) {
         return snapshot.getValue(mModelClass);
     }
 

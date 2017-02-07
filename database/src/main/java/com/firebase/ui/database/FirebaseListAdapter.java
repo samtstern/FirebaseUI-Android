@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.firebase.ui.database.adapter.FirebaseAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,17 +50,14 @@ import com.google.firebase.database.Query;
  *
  * @param <T> The class type to use as a model for the data contained in the children of the given
  *            Firebase location
- * @deprecated use {@link com.firebase.ui.database.adapter.FirebaseRecyclerAdapter} instead
  */
-@Deprecated
-public abstract class FirebaseListAdapter<T> extends BaseAdapter {
+public abstract class FirebaseListAdapter<T> extends BaseAdapter implements FirebaseAdapter<T> {
     private static final String TAG = "FirebaseListAdapter";
 
-    private FirebaseArray mSnapshots;
-    private final Class<T> mModelClass;
+    protected FirebaseArray mSnapshots;
+    protected Class<T> mModelClass;
     protected Activity mActivity;
     protected int mLayout;
-    private ChangeEventListener mListener;
 
     FirebaseListAdapter(Activity activity,
                         Class<T> modelClass,
@@ -70,22 +68,7 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
         mLayout = modelLayout;
         mSnapshots = snapshots;
 
-        mListener = mSnapshots.addChangeEventListener(new ChangeEventListener() {
-            @Override
-            public void onChildChanged(EventType type, int index, int oldIndex) {
-                FirebaseListAdapter.this.onChildChanged(type, index, oldIndex);
-            }
-
-            @Override
-            public void onDataChanged() {
-                FirebaseListAdapter.this.onDataChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                FirebaseListAdapter.this.onCancelled(error);
-            }
-        });
+        startListening();
     }
 
     /**
@@ -105,8 +88,9 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
         this(activity, modelClass, modelLayout, new FirebaseArray(ref));
     }
 
+    @Override
     public void cleanup() {
-        mSnapshots.removeChangeEventListener(mListener);
+        mSnapshots.removeChangeEventListener(this);
     }
 
     @Override
@@ -116,7 +100,7 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
 
     @Override
     public T getItem(int position) {
-        return parseSnapshot(mSnapshots.get(position));
+        return parseDataSnapshot(mSnapshots.get(position));
     }
 
     /**
@@ -126,10 +110,12 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
      * @param snapshot the DataSnapshot to extract the model from
      * @return the model extracted from the DataSnapshot
      */
+    @Deprecated
     protected T parseSnapshot(DataSnapshot snapshot) {
         return snapshot.getValue(mModelClass);
     }
 
+    @Override
     public DatabaseReference getRef(int position) {
         return mSnapshots.get(position).getRef();
     }
@@ -154,21 +140,24 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
     }
 
     /**
-     * @see ChangeEventListener#onChildChanged(ChangeEventListener.EventType, int, int)
+     * @see ChangeEventListener#onChildEvent(ChangeEventListener.EventType, int, int)
      */
+    @Deprecated
     protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
         notifyDataSetChanged();
     }
 
     /**
-     * @see ChangeEventListener#onDataChanged()
+     * @see ChangeEventListener#onNewData()
      */
+    @Deprecated
     protected void onDataChanged() {
     }
 
     /**
-     * @see ChangeEventListener#onCancelled(DatabaseError)
+     * @see ChangeEventListener#onDatabaseError(DatabaseError)
      */
+    @Deprecated
     protected void onCancelled(DatabaseError error) {
         Log.w(TAG, error.toException());
     }
@@ -186,4 +175,36 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
      * @param position The position in the list of the view being populated
      */
     protected abstract void populateView(View v, T model, int position);
+
+
+    @Override
+    public void startListening() {
+        if (!mSnapshots.isListening()) {
+            mSnapshots.addChangeEventListener(this);
+        }
+    }
+
+    @Override
+    public void onChildEvent(EventType type, int index, int oldIndex) {
+        // Call out to old method for backwards compatibility
+        onChildChanged(type, index, oldIndex);
+    }
+
+    @Override
+    public void onNewData() {
+        // Call out to old method for backwards compatibility
+        onDataChanged();
+    }
+
+    @Override
+    public void onDatabaseError(DatabaseError error) {
+        // Call out to old method for backwards compatibility
+        onCancelled(error);
+    }
+
+    @Override
+    public T parseDataSnapshot(DataSnapshot snapshot) {
+        // Call out to old method for backwards compatibility
+        return parseSnapshot(snapshot);
+    }
 }

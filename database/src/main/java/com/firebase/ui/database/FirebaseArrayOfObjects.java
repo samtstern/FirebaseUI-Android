@@ -28,7 +28,7 @@ public class FirebaseArrayOfObjects<E> extends ImmutableList<E> {
         mEClass = modelClass;
         mParser = new SnapshotParser<E>() {
             @Override
-            public E parseSnapshot(DataSnapshot snapshot) {
+            public E parseDataSnapshot(DataSnapshot snapshot) {
                 return snapshot.getValue(mEClass);
             }
         };
@@ -114,7 +114,7 @@ public class FirebaseArrayOfObjects<E> extends ImmutableList<E> {
 
     @Override
     public E get(int index) {
-        return mParser.parseSnapshot(mSnapshots.get(index));
+        return mParser.parseDataSnapshot(mSnapshots.get(index));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class FirebaseArrayOfObjects<E> extends ImmutableList<E> {
         }
 
         @Override
-        public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+        public void onChildEvent(ChangeEventListener.EventType type, int index, int oldIndex) {
             switch (type) {
                 case ADDED:
                     mObjects.add(get(index));
@@ -229,11 +229,11 @@ public class FirebaseArrayOfObjects<E> extends ImmutableList<E> {
         }
 
         @Override
-        public void onDataChanged() {
+        public void onNewData() {
         }
 
         @Override
-        public void onCancelled(DatabaseError error) {
+        public void onDatabaseError(DatabaseError error) {
         }
     }
 }

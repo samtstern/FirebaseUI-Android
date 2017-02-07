@@ -9,5 +9,5 @@ public interface SnapshotParser<T> {
      * @param snapshot the DataSnapshot to extract the model from
      * @return the model extracted from the DataSnapshot
      */
-    T parseSnapshot(DataSnapshot snapshot);
+    T parseDataSnapshot(DataSnapshot snapshot);
 }

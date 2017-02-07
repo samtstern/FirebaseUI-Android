@@ -39,15 +39,15 @@ public class TestUtils {
         final Semaphore semaphore = new Semaphore(0);
         ChangeEventListener listener = array.addChangeEventListener(new ChangeEventListener() {
             @Override
-            public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+            public void onChildEvent(ChangeEventListener.EventType type, int index, int oldIndex) {
                 semaphore.release();
             }
 
             @Override
-            public void onDataChanged() {}
+            public void onNewData() {}
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onDatabaseError(DatabaseError error) {
                 throw new IllegalStateException(error.toException());
             }
         });

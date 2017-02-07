@@ -200,21 +200,21 @@ public class FirebaseArray extends ImmutableList<DataSnapshot> implements ChildE
                                               int oldIndex) {
         if (!mNotifyListeners) return;
         for (ChangeEventListener listener : mListeners) {
-            listener.onChildChanged(type, index, oldIndex);
+            listener.onChildEvent(type, index, oldIndex);
         }
     }
 
     protected void notifyListenersOnDataChanged() {
         if (!mNotifyListeners) return;
         for (ChangeEventListener listener : mListeners) {
-            listener.onDataChanged();
+            listener.onNewData();
         }
     }
 
     protected void notifyListenersOnCancelled(DatabaseError error) {
         if (!mNotifyListeners) return;
         for (ChangeEventListener listener : mListeners) {
-            listener.onCancelled(error);
+            listener.onDatabaseError(error);
         }
     }
 

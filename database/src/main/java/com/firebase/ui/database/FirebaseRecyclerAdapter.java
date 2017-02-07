@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.adapter.FirebaseAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,18 +72,17 @@ import java.lang.reflect.InvocationTargetException;
  * @param <T>  The Java class that maps to the type of objects stored in the Firebase location.
  * @param <VH> The ViewHolder class that contains the Views in the layout that is shown for each
  *             object.
- * @deprecated use {@link com.firebase.ui.database.adapter.FirebaseRecyclerAdapter} instead
  */
-@Deprecated
 public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> {
+        extends RecyclerView.Adapter<VH>
+        implements FirebaseAdapter<T> {
+
     private static final String TAG = "FirebaseRecyclerAdapter";
 
-    private FirebaseArray mSnapshots;
-    private Class<T> mModelClass;
+    protected FirebaseArray mSnapshots;
+    protected Class<T> mModelClass;
     protected Class<VH> mViewHolderClass;
     protected int mModelLayout;
-    private ChangeEventListener mListener;
 
     FirebaseRecyclerAdapter(Class<T> modelClass,
                             @LayoutRes int modelLayout,
@@ -93,22 +93,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         mViewHolderClass = viewHolderClass;
         mSnapshots = snapshots;
 
-        mListener = mSnapshots.addChangeEventListener(new ChangeEventListener() {
-            @Override
-            public void onChildChanged(EventType type, int index, int oldIndex) {
-                FirebaseRecyclerAdapter.this.onChildChanged(type, index, oldIndex);
-            }
-
-            @Override
-            public void onDataChanged() {
-                FirebaseRecyclerAdapter.this.onDataChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                FirebaseRecyclerAdapter.this.onCancelled(error);
-            }
-        });
+        startListening();
     }
 
     /**
@@ -128,8 +113,9 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         this(modelClass, modelLayout, viewHolderClass, new FirebaseArray(ref));
     }
 
+    @Override
     public void cleanup() {
-        mSnapshots.removeChangeEventListener(mListener);
+        mSnapshots.removeChangeEventListener(this);
     }
 
     @Override
@@ -137,8 +123,9 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         return mSnapshots.size();
     }
 
+    @Override
     public T getItem(int position) {
-        return parseSnapshot(mSnapshots.get(position));
+        return parseDataSnapshot(mSnapshots.get(position));
     }
 
     /**
@@ -148,10 +135,12 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * @param snapshot the DataSnapshot to extract the model from
      * @return the model extracted from the DataSnapshot
      */
+    @Deprecated
     protected T parseSnapshot(DataSnapshot snapshot) {
         return snapshot.getValue(mModelClass);
     }
 
+    @Override
     public DatabaseReference getRef(int position) {
         return mSnapshots.get(position).getRef();
     }
@@ -191,8 +180,9 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     }
 
     /**
-     * @see ChangeEventListener#onChildChanged(ChangeEventListener.EventType, int, int)
+     * @see ChangeEventListener#onChildEvent(ChangeEventListener.EventType, int, int)
      */
+    @Deprecated
     protected void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
         switch (type) {
             case ADDED:
@@ -213,14 +203,16 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     }
 
     /**
-     * @see ChangeEventListener#onDataChanged()
+     * @see ChangeEventListener#onNewData()
      */
+    @Deprecated
     protected void onDataChanged() {
     }
 
     /**
-     * @see ChangeEventListener#onCancelled(DatabaseError)
+     * @see ChangeEventListener#onDatabaseError(DatabaseError)
      */
+    @Deprecated
     protected void onCancelled(DatabaseError error) {
         Log.w(TAG, error.toException());
     }
@@ -238,4 +230,35 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * @param position   The position in the list of the view being populated
      */
     protected abstract void populateViewHolder(VH viewHolder, T model, int position);
+
+    @Override
+    public void startListening() {
+        if (!mSnapshots.isListening()) {
+            mSnapshots.addChangeEventListener(this);
+        }
+    }
+
+    @Override
+    public void onChildEvent(EventType type, int index, int oldIndex) {
+        // Call out to old method for backwards compatibility
+        onChildChanged(type, index, oldIndex);
+    }
+
+    @Override
+    public void onNewData() {
+        // Call out to old method for backwards compatibility
+        onDataChanged();
+    }
+
+    @Override
+    public void onDatabaseError(DatabaseError error) {
+        // Call out to old method for backwards compatibility
+        onCancelled(error);
+    }
+
+    @Override
+    public T parseDataSnapshot(DataSnapshot snapshot) {
+        // Call out to old method for backwards compatibility
+        return parseSnapshot(snapshot);
+    }
 }

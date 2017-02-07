@@ -43,7 +43,7 @@ public interface ChangeEventListener {
      * @param oldIndex If {@code type} is a moved event, the previous index of the moved child.
      *                 For any other event, {@code oldIndex} will be -1.
      */
-    void onChildChanged(EventType type, int index, int oldIndex);
+    void onChildEvent(EventType type, int index, int oldIndex);
 
     /** This method will be triggered each time updates from the database have been completely processed.
      * So the first time this method is called, the initial data has been loaded - including the case
@@ -53,7 +53,7 @@ public interface ChangeEventListener {
      * You would typically override this method to hide a loading indicator (after the initial load) or
      * to complete a batch update to a UI element.
      */
-    void onDataChanged();
+    void onNewData();
 
     /**
      * This method will be triggered in the event that this listener either failed at the server,
@@ -61,5 +61,5 @@ public interface ChangeEventListener {
      *
      * @param error A description of the error that occurred
      */
-    void onCancelled(DatabaseError error);
+    void onDatabaseError(DatabaseError error);
 }
